@@ -1,0 +1,34 @@
+{
+    "variables": {
+      "aws_region": "us-west-2",
+      "source_ami_filter_name": "amzn2-ami-hvm-*-x86_64-gp2",
+      "instance_type": "t2.micro",
+      "ssh_username": "ec2-user",
+      "ansible_playbook": "setup_apache.yml"
+    },
+    "builders": [
+      {
+        "type": "amazon-ebs",
+        "region": "{{user `aws_region`}}",
+        "source_ami_filter": {
+          "filters": {
+            "virtualization-type": "hvm",
+            "name": "{{user `source_ami_filter_name`}}",
+            "root-device-type": "ebs"
+          },
+          "owners": ["amazon"],
+          "most_recent": true
+        },
+        "instance_type": "{{user `instance_type`}}",
+        "ssh_username": "{{user `ssh_username`}}",
+        "ami_name": "apache-server-{{timestamp}}"
+      }
+    ],
+    "provisioners": [
+      {
+        "type": "ansible",
+        "playbook_file": "{{user `ansible_playbook`}}"
+      }
+    ]
+  }
+  
